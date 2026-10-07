@@ -1,0 +1,958 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>AI Assignment Writer – Free Online Assignment Generator</title>
+  <meta name="description" content="Generate structured academic assignments with AI. Choose your topic, education level, word count and writing tone. Free online AI Assignment Writer.">
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background:
+        radial-gradient(circle at 10% 10%, rgba(56,189,248,.18), transparent 28%),
+        radial-gradient(circle at 90% 20%, rgba(74,222,128,.18), transparent 28%),
+        linear-gradient(135deg, #effaff, #f0fff5);
+      color: #123047;
+      min-height: 100vh;
+    }
+
+    .container {
+      width: min(1100px, 94%);
+      margin: auto;
+      padding: 30px 0 50px;
+    }
+
+    .hero {
+      text-align: center;
+      margin-bottom: 25px;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 8px 15px;
+      border-radius: 30px;
+      background: #dff7ff;
+      color: #0879a8;
+      font-size: 13px;
+      font-weight: 800;
+      margin-bottom: 12px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(30px, 5vw, 48px);
+      color: #123b57;
+      letter-spacing: -1px;
+    }
+
+    .hero p {
+      max-width: 720px;
+      margin: 12px auto 0;
+      color: #5b7180;
+      line-height: 1.7;
+      font-size: 16px;
+    }
+
+    .card {
+      background: rgba(255,255,255,.88);
+      border: 1px solid rgba(125,211,252,.35);
+      border-radius: 24px;
+      padding: 25px;
+      box-shadow: 0 15px 45px rgba(20,100,130,.10);
+      backdrop-filter: blur(12px);
+      margin-bottom: 22px;
+    }
+
+    .card h2 {
+      margin: 0 0 20px;
+      font-size: 22px;
+      color: #174b67;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 17px;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+
+    .field.full {
+      grid-column: 1 / -1;
+    }
+
+    label {
+      font-weight: 700;
+      font-size: 14px;
+      color: #31576b;
+    }
+
+    input,
+    select,
+    textarea {
+      width: 100%;
+      border: 1px solid #c9e5ef;
+      background: #fff;
+      border-radius: 13px;
+      padding: 13px 14px;
+      font-size: 15px;
+      color: #17394d;
+      outline: none;
+      transition: .2s;
+    }
+
+    textarea {
+      min-height: 130px;
+      resize: vertical;
+      line-height: 1.55;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      border-color: #22a6d5;
+      box-shadow: 0 0 0 4px rgba(34,166,213,.10);
+    }
+
+    .word-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .word-row input {
+      flex: 1;
+    }
+
+    .quick-buttons {
+      display: flex;
+      gap: 7px;
+      flex-wrap: wrap;
+    }
+
+    .quick-buttons button {
+      border: 1px solid #bfe4ef;
+      background: #eefaff;
+      color: #13769a;
+      border-radius: 9px;
+      padding: 8px 11px;
+      cursor: pointer;
+      font-weight: 700;
+      font-size: 12px;
+    }
+
+    .quick-buttons button:hover {
+      background: #dff7ff;
+    }
+
+    .generate-wrap {
+      margin-top: 22px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .generate-btn {
+      border: none;
+      border-radius: 15px;
+      padding: 16px 32px;
+      font-size: 17px;
+      font-weight: 800;
+      color: white;
+      cursor: pointer;
+      background: linear-gradient(135deg, #0891b2, #16a34a);
+      box-shadow: 0 12px 28px rgba(8,145,178,.20);
+      transition: .2s;
+    }
+
+    .generate-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 16px 32px rgba(8,145,178,.26);
+    }
+
+    .generate-btn:disabled {
+      opacity: .65;
+      cursor: wait;
+      transform: none;
+    }
+
+    .status {
+      display: none;
+      margin-top: 17px;
+      padding: 13px 15px;
+      border-radius: 12px;
+      background: #effcff;
+      border: 1px solid #bdebf5;
+      color: #17627a;
+      text-align: center;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .status.show {
+      display: block;
+    }
+
+    .status.error {
+      background: #fff2f2;
+      border-color: #fecaca;
+      color: #b42318;
+    }
+
+    .output-card {
+      display: none;
+    }
+
+    .output-card.show {
+      display: block;
+    }
+
+    .output-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 15px;
+    }
+
+    .output-top h2 {
+      margin: 0;
+    }
+
+    .actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .action-btn {
+      border: none;
+      padding: 10px 14px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: 700;
+      font-size: 13px;
+    }
+
+    .copy-btn {
+      background: #dff7ff;
+      color: #0879a8;
+    }
+
+    .download-btn {
+      background: #dcfce7;
+      color: #16723a;
+    }
+
+    .clear-btn {
+      background: #fee2e2;
+      color: #b42318;
+    }
+
+    .assignment-output {
+      white-space: pre-wrap;
+      line-height: 1.8;
+      background: #fbfeff;
+      border: 1px solid #d8edf3;
+      border-radius: 17px;
+      padding: 22px;
+      min-height: 300px;
+      color: #263f4d;
+      font-size: 15px;
+      overflow-wrap: anywhere;
+    }
+
+    .stats {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 13px;
+    }
+
+    .stat {
+      background: #f0fdf4;
+      border: 1px solid #c9f1d6;
+      color: #237044;
+      padding: 8px 11px;
+      border-radius: 10px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .info {
+      text-align: center;
+      color: #69808c;
+      font-size: 13px;
+      line-height: 1.7;
+      margin-top: 20px;
+    }
+
+    .footer {
+      text-align: center;
+      margin-top: 25px;
+      color: #78909c;
+      font-size: 12px;
+    }
+
+    .loading {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+    }
+
+    .spinner {
+      width: 17px;
+      height: 17px;
+      border: 3px solid #bdebf5;
+      border-top-color: #0891b2;
+      border-radius: 50%;
+      animation: spin .8s linear infinite;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    @media (max-width: 700px) {
+      .container {
+        width: 92%;
+        padding-top: 20px;
+      }
+
+      .card {
+        padding: 18px;
+        border-radius: 19px;
+      }
+
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .field.full {
+        grid-column: auto;
+      }
+
+      .generate-btn {
+        width: 100%;
+      }
+
+      .output-top {
+        align-items: flex-start;
+      }
+
+      .actions {
+        width: 100%;
+      }
+
+      .action-btn {
+        flex: 1;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="container">
+
+  <section class="hero">
+    <div class="badge">✨ FREE AI STUDENT TOOL</div>
+    <h1>AI Assignment Writer</h1>
+    <p>
+      Create a structured academic assignment draft with AI.
+      Enter your topic, choose your level, word count and writing style.
+    </p>
+  </section>
+
+  <section class="card">
+
+    <h2>📝 Create Your Assignment</h2>
+
+    <div class="grid">
+
+      <div class="field full">
+        <label for="topic">Assignment Topic</label>
+        <textarea
+          id="topic"
+          placeholder="Example: The impact of Artificial Intelligence on modern education"
+          maxlength="500"></textarea>
+      </div>
+
+      <div class="field">
+        <label for="educationLevel">Education Level</label>
+        <select id="educationLevel">
+          <option value="School">School</option>
+          <option value="A/L">A/L</option>
+          <option value="Diploma">Diploma</option>
+          <option value="Undergraduate" selected>Undergraduate</option>
+          <option value="Postgraduate">Postgraduate</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label for="tone">Writing Tone</label>
+        <select id="tone">
+          <option value="Academic" selected>Academic</option>
+          <option value="Simple Academic">Simple Academic</option>
+          <option value="Professional">Professional</option>
+          <option value="Formal">Formal</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label for="wordCount">Target Word Count</label>
+
+        <div class="word-row">
+          <input
+            id="wordCount"
+            type="number"
+            min="300"
+            max="3000"
+            value="1000"
+            step="100">
+        </div>
+
+        <div class="quick-buttons">
+          <button type="button" data-words="500">500</button>
+          <button type="button" data-words="1000">1000</button>
+          <button type="button" data-words="1500">1500</button>
+          <button type="button" data-words="2000">2000</button>
+          <button type="button" data-words="3000">3000</button>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="language">Assignment Language</label>
+        <select id="language">
+          <option value="English" selected>English</option>
+          <option value="Sinhala">Sinhala</option>
+        </select>
+      </div>
+
+    </div>
+
+    <div class="generate-wrap">
+      <button id="generateBtn" class="generate-btn">
+        ✨ Generate Assignment
+      </button>
+    </div>
+
+    <div id="status" class="status"></div>
+
+  </section>
+
+  <section id="outputCard" class="card output-card">
+
+    <div class="output-top">
+
+      <h2>📄 Your Assignment</h2>
+
+      <div class="actions">
+        <button id="copyBtn" class="action-btn copy-btn">
+          📋 Copy
+        </button>
+
+        <button id="downloadBtn" class="action-btn download-btn">
+          ⬇️ Download
+        </button>
+
+        <button id="clearBtn" class="action-btn clear-btn">
+          🗑️ Clear
+        </button>
+      </div>
+
+    </div>
+
+    <div id="assignmentOutput" class="assignment-output"></div>
+
+    <div class="stats">
+      <div class="stat">
+        Words: <span id="outputWords">0</span>
+      </div>
+
+      <div class="stat">
+        Characters: <span id="outputChars">0</span>
+      </div>
+    </div>
+
+  </section>
+
+  <div class="info">
+    ⚠️ AI-generated content should be reviewed, edited and referenced before academic submission.
+  </div>
+
+  <div class="footer">
+    Free Tools Zone © 2026 • AI Assignment Writer
+  </div>
+
+</div>
+
+<script>
+  /*
+    ==========================================================
+    FREE TOOLS ZONE - AI ASSIGNMENT WRITER
+    Frontend: GitHub Pages
+    Backend: Cloudflare Worker
+    ==========================================================
+  */
+
+  const WORKER_URL =
+    "https://ftz-ai-api.snxbro1.workers.dev/";
+
+  const topicInput =
+    document.getElementById("topic");
+
+  const educationLevel =
+    document.getElementById("educationLevel");
+
+  const wordCountInput =
+    document.getElementById("wordCount");
+
+  const toneInput =
+    document.getElementById("tone");
+
+  const languageInput =
+    document.getElementById("language");
+
+  const generateBtn =
+    document.getElementById("generateBtn");
+
+  const statusBox =
+    document.getElementById("status");
+
+  const outputCard =
+    document.getElementById("outputCard");
+
+  const output =
+    document.getElementById("assignmentOutput");
+
+  const outputWords =
+    document.getElementById("outputWords");
+
+  const outputChars =
+    document.getElementById("outputChars");
+
+  const copyBtn =
+    document.getElementById("copyBtn");
+
+  const downloadBtn =
+    document.getElementById("downloadBtn");
+
+  const clearBtn =
+    document.getElementById("clearBtn");
+
+
+  function showStatus(message, type = "normal") {
+
+    statusBox.className = "status show";
+
+    if (type === "error") {
+      statusBox.classList.add("error");
+    }
+
+    statusBox.innerHTML = message;
+  }
+
+
+  function hideStatus() {
+
+    statusBox.className = "status";
+    statusBox.innerHTML = "";
+  }
+
+
+  function countWords(text) {
+
+    const clean = text.trim();
+
+    if (!clean) {
+      return 0;
+    }
+
+    return clean.split(/\s+/).length;
+  }
+
+
+  function updateStats(text) {
+
+    outputWords.textContent =
+      countWords(text);
+
+    outputChars.textContent =
+      text.length.toLocaleString();
+  }
+
+
+  function setLoading(loading) {
+
+    generateBtn.disabled = loading;
+
+    if (loading) {
+
+      generateBtn.innerHTML =
+        '<span class="loading">' +
+        '<span class="spinner"></span>' +
+        'Generating Assignment...' +
+        '</span>';
+
+    } else {
+
+      generateBtn.innerHTML =
+        "✨ Generate Assignment";
+    }
+  }
+
+
+  async function generateAssignment() {
+
+    const topic =
+      topicInput.value.trim();
+
+    const education =
+      educationLevel.value;
+
+    const wordCount =
+      Number(wordCountInput.value);
+
+    const tone =
+      toneInput.value;
+
+    const language =
+      languageInput.value;
+
+
+    if (!topic) {
+
+      showStatus(
+        "⚠️ Please enter your assignment topic.",
+        "error"
+      );
+
+      topicInput.focus();
+
+      return;
+    }
+
+
+    if (topic.length > 500) {
+
+      showStatus(
+        "⚠️ Please keep the topic under 500 characters.",
+        "error"
+      );
+
+      return;
+    }
+
+
+    if (
+      !Number.isFinite(wordCount) ||
+      wordCount < 300 ||
+      wordCount > 3000
+    ) {
+
+      showStatus(
+        "⚠️ Word count must be between 300 and 3000.",
+        "error"
+      );
+
+      wordCountInput.focus();
+
+      return;
+    }
+
+
+    setLoading(true);
+
+    showStatus(
+      '<span class="loading">' +
+      '<span class="spinner"></span>' +
+      'AI is preparing your assignment. Please wait...' +
+      '</span>'
+    );
+
+
+    outputCard.classList.remove("show");
+
+
+    try {
+
+      const response =
+        await fetch(WORKER_URL, {
+
+          method: "POST",
+
+          headers: {
+            "Content-Type": "application/json"
+          },
+
+          body: JSON.stringify({
+
+            topic: topic,
+
+            educationLevel: education,
+
+            wordCount: wordCount,
+
+            tone: tone,
+
+            language: language
+
+          })
+
+        });
+
+
+      let data = null;
+
+      try {
+
+        data = await response.json();
+
+      } catch (jsonError) {
+
+        throw new Error(
+          "The server returned an invalid response."
+        );
+
+      }
+
+
+      if (!response.ok || !data.success) {
+
+        const serverMessage =
+          data && data.error
+            ? data.error
+            : "Unable to generate the assignment.";
+
+        throw new Error(serverMessage);
+      }
+
+
+      const assignment =
+        String(data.assignment || "").trim();
+
+
+      if (!assignment) {
+
+        throw new Error(
+          "AI returned an empty assignment."
+        );
+      }
+
+
+      output.textContent =
+        assignment;
+
+      updateStats(assignment);
+
+      outputCard.classList.add("show");
+
+      showStatus(
+        "✅ Assignment generated successfully."
+      );
+
+
+      setTimeout(() => {
+
+        outputCard.scrollIntoView({
+          behavior: "smooth",
+          block: "start"
+        });
+
+      }, 150);
+
+
+    } catch (error) {
+
+      console.error(error);
+
+      showStatus(
+        "❌ " +
+        (error.message ||
+        "Something went wrong. Please try again."),
+        "error"
+      );
+
+    } finally {
+
+      setLoading(false);
+
+    }
+
+  }
+
+
+  generateBtn.addEventListener(
+    "click",
+    generateAssignment
+  );
+
+
+  topicInput.addEventListener(
+    "keydown",
+    function(event) {
+
+      if (
+        (event.ctrlKey || event.metaKey) &&
+        event.key === "Enter"
+      ) {
+
+        generateAssignment();
+
+      }
+
+    }
+  );
+
+
+  document
+    .querySelectorAll("[data-words]")
+    .forEach(button => {
+
+      button.addEventListener(
+        "click",
+        function() {
+
+          wordCountInput.value =
+            this.dataset.words;
+
+        }
+      );
+
+    });
+
+
+  copyBtn.addEventListener(
+    "click",
+    async function() {
+
+      const text =
+        output.textContent.trim();
+
+      if (!text) {
+        return;
+      }
+
+
+      try {
+
+        await navigator.clipboard.writeText(text);
+
+        const oldText =
+          copyBtn.textContent;
+
+        copyBtn.textContent =
+          "✅ Copied!";
+
+        setTimeout(() => {
+
+          copyBtn.textContent =
+            oldText;
+
+        }, 1600);
+
+      } catch (error) {
+
+        const range =
+          document.createRange();
+
+        range.selectNodeContents(output);
+
+        const selection =
+          window.getSelection();
+
+        selection.removeAllRanges();
+
+        selection.addRange(range);
+
+        showStatus(
+          "Text selected. Press Copy from your browser if needed."
+        );
+
+      }
+
+    }
+  );
+
+
+  downloadBtn.addEventListener(
+    "click",
+    function() {
+
+      const text =
+        output.textContent.trim();
+
+      if (!text) {
+        return;
+      }
+
+
+      const blob =
+        new Blob(
+          [text],
+          {
+            type: "text/plain;charset=utf-8"
+          }
+        );
+
+
+      const url =
+        URL.createObjectURL(blob);
+
+
+      const link =
+        document.createElement("a");
+
+
+      link.href = url;
+
+      link.download =
+        "AI-Assignment.txt";
+
+      document.body.appendChild(link);
+
+      link.click();
+
+      link.remove();
+
+      URL.revokeObjectURL(url);
+
+    }
+  );
+
+
+  clearBtn.addEventListener(
+    "click",
+    function() {
+
+      output.textContent = "";
+
+      outputWords.textContent = "0";
+
+      outputChars.textContent = "0";
+
+      outputCard.classList.remove("show");
+
+      hideStatus();
+
+    }
+  );
+
+</script>
+
+</body>
+</html>
